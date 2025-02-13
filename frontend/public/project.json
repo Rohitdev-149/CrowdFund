@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "AI Startup",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-robot",
+    "category": "Artificial Intelligence",
+    "description": "An AI-driven platform for automation.",
+    "raised": 25000,
+    "target": 100000,
+    "investors": 150,
+    "daysLeft": 20
+  },
+  {
+    "id": 2,
+    "name": "Green Energy Project",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-solar-panel",
+    "category": "Renewable Energy",
+    "description": "A project promoting solar energy solutions.",
+    "raised": 40000,
+    "target": 150000,
+    "investors": 200,
+    "daysLeft": 35
+  },
+  {
+    "id": 3,
+    "name": "EdTech Platform",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-book",
+    "category": "Education",
+    "description": "A modern online learning platform.",
+    "raised": 10000,
+    "target": 80000,
+    "investors": 120,
+    "daysLeft": 15
+  },
+  {
+    "id": 4,
+    "name": "Healthcare Innovation",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-heartbeat",
+    "category": "Healthcare",
+    "description": "A new AI-powered health diagnostic tool.",
+    "raised": 50000,
+    "target": 200000,
+    "investors": 300,
+    "daysLeft": 40
+  },
+  {
+    "id": 5,
+    "name": "Smart Agriculture",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-seedling",
+    "category": "Agriculture",
+    "description": "AI and IoT solutions for smart farming.",
+    "raised": 35000,
+    "target": 120000,
+    "investors": 180,
+    "daysLeft": 25
+  },
+  {
+    "id": 6,
+    "name": "Blockchain Payment System",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-coins",
+    "category": "Finance",
+    "description": "A decentralized payment gateway for seamless transactions.",
+    "raised": 60000,
+    "target": 250000,
+    "investors": 400,
+    "daysLeft": 50
+  },
+  {
+    "id": 7,
+    "name": "Space Exploration Startup",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-rocket",
+    "category": "Aerospace",
+    "description": "Innovative propulsion technology for deep space missions.",
+    "raised": 75000,
+    "target": 300000,
+    "investors": 500,
+    "daysLeft": 60
+  },
+  {
+    "id": 8,
+    "name": "Sustainable Fashion Brand",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-tshirt",
+    "category": "Fashion",
+    "description": "Eco-friendly clothing made from recycled materials.",
+    "raised": 20000,
+    "target": 90000,
+    "investors": 130,
+    "daysLeft": 18
+  },
+  {
+    "id": 9,
+    "name": "VR Gaming Experience",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-gamepad",
+    "category": "Gaming",
+    "description": "Next-gen virtual reality gaming experience.",
+    "raised": 45000,
+    "target": 180000,
+    "investors": 250,
+    "daysLeft": 30
+  },
+  {
+    "id": 10,
+    "name": "Smart Home Automation",
+    "image": "https://via.placeholder.com/150",
+    "icon": "fas fa-home",
+    "category": "Technology",
+    "description": "AI-driven home automation for energy efficiency.",
+    "raised": 55000,
+    "target": 220000,
+    "investors": 350,
+    "daysLeft": 42
+  }
+]
