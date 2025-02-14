@@ -31,7 +31,6 @@ const ProjectCard = ({ project, isCompact = false }) => {
       <h3 className="text-base sm:text-lg font-semibold mt-2">{project.name}</h3>
       {!isCompact && <p className="text-gray-600 mt-2 text-xs sm:text-sm">{project.description}</p>}
 
-      {/* Progress Bar */}
       <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 mt-3">
         <div
           className="bg-blue-500 h-2 sm:h-3 rounded-full"
@@ -40,7 +39,6 @@ const ProjectCard = ({ project, isCompact = false }) => {
       </div>
       <p className="text-xs sm:text-sm text-gray-700 mt-1">Raised: ₹{project.raised.toLocaleString()} / ₹{project.target.toLocaleString()}</p>
 
-      {/* Project Stats */}
       <div className="flex justify-between text-gray-700 mt-3 text-xs sm:text-sm">
         <span className="flex items-center gap-1">
           <FaUsers className="text-blue-500" /> {project.investors} investors

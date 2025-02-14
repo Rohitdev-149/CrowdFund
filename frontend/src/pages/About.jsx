@@ -11,7 +11,6 @@ function About() {
         social causes, and creative minds by providing a secure & transparent crowdfunding ecosystem.
       </p>
 
-      {/* Our Mission */}
       <div className="bg-gray-100 rounded-lg p-6 shadow-md mb-6">
         <h3 className="text-2xl font-semibold text-blue-500 flex items-center justify-center gap-2">
           🚀 Our Mission
@@ -22,7 +21,6 @@ function About() {
         </p>
       </div>
 
-      {/* How It Works */}
       <div className="bg-gray-100 rounded-lg p-6 shadow-md mb-6">
         <h3 className="text-2xl font-semibold text-blue-500 flex items-center justify-center gap-2">
           💡 How It Works
@@ -34,7 +32,6 @@ function About() {
         </ul>
       </div>
 
-      {/* Why Choose Us */}
       <div className="bg-gray-100 rounded-lg p-6 shadow-md mb-6">
         <h3 className="text-2xl font-semibold text-blue-500 flex items-center justify-center gap-2">
           🌟 Why Choose Us?

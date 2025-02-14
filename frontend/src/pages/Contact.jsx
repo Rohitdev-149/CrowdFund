@@ -11,7 +11,6 @@ function Contact() {
       </p>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Contact Details */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md">
           <h3 className="text-2xl font-semibold text-blue-500 mb-4">📍 Our Office</h3>
           <p className="text-gray-700">123 FundConnect Street, Tech City, India</p>
