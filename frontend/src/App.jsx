@@ -8,6 +8,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import StartProject from './pages/StartProject';
 // import About from './pages/About';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path='/contact' element={<Contact/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup />} />
+        <Route path='/start-project' element={<StartProject />}/>
 
       </Routes>
       <Footer/>
