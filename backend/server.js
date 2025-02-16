@@ -1,18 +1,19 @@
-require('dotenv').config();
-const express = require('express');
-const connectDB = require('./config/db');
-const cors = require('cors'); // Add CORS support
+require("dotenv").config();
+const express = require("express");
+const connectDB = require("./config/db");
+const cors = require("cors");
 
 const app = express();
 connectDB();
 
-app.use(cors()); // Enable CORS
+app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/projects", require("./routes/projectRoutes")); // ✅ Add this line
 
-app.get('/', (req, res) => res.send('API is running...'));
+app.get("/", (req, res) => res.send("API is running..."));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
