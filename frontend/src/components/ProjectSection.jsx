@@ -10,8 +10,10 @@ function ProjectSection() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch("/project.json");
+      
+        const response = await fetch("http://localhost:5001/api/projects");  
         const data = await response.json();
+        
         setProjects(data.slice(0, 3)); 
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -30,11 +32,12 @@ function ProjectSection() {
       </h2>
 
       {loading ? (
-        <p className="text-center text-gray-600 ">Loading projects...</p>
+        <p className="text-center text-gray-600">Loading projects...</p>
       ) : projects.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.slice(0,3).map((project) => (
-            <ProjectCard key={project.id} project={project} />
+          {/* Displaying projects */}
+          {projects.map((project) => (
+            <ProjectCard key={project._id} project={project} />
           ))}
         </div>
       ) : (
@@ -42,7 +45,8 @@ function ProjectSection() {
       )}
 
       <div className=" mt-25 flex justify-center">
-      <button className="bg-orange-500 hover:bg-orange-600 shadow-lg px-8 py-4 rounded-lg text-lg md:text-xl text-white font-semibold transition-all duration-300 hover:scale-105"
+        <button 
+          className="bg-orange-500 hover:bg-orange-600 shadow-lg px-8 py-4 rounded-lg text-lg md:text-xl text-white font-semibold transition-all duration-300 hover:scale-105"
           onClick={() => navigate("/projects")}
         >
           View All Projects
