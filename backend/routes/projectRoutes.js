@@ -1,43 +1,55 @@
 const express = require("express");
+const multer = require("multer");
+const path = require("path");
 const Project = require("../models/Project");
-const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// 🟢 GET: Fetch All Projects
-router.get("/", async (req, res) => {
-  try {
-    const projects = await Project.find().sort({ createdAt: -1 });
-    res.json(projects);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+
+    cb(null, './uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
 
-// 🟢 POST: Create a New Project (Authenticated Users Only)
-router.post("/", authMiddleware, async (req, res) => {
-  try {
-    const { name, description, category, image, target, daysLeft } = req.body;
+const upload = multer({ storage: storage });
 
-    if (!name || !description || !category || !target || !daysLeft) {
-      return res.status(400).json({ message: "All fields are required" });
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+    const { name, description, category, target, daysLeft } = req.body;
+
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
     }
 
     const newProject = new Project({
       name,
       description,
       category,
-      image,
       target,
       daysLeft,
-      creator: req.user.id, // Gets user ID from the token
+      image: imageUrl, 
     });
 
     await newProject.save();
-    res.status(201).json({ message: "Project created successfully!", project: newProject });
-
+    res.status(201).json({ message: "Project created successfully", project: newProject });
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    console.error("Error creating project:", error);
+    res.status(500).json({ message: "Failed to create project", error: error.message });
+  }
+});
+
+router.get("", async (req, res) => {
+  try {
+    const projects = await Project.find();  // Fetch all projects from MongoDB
+    res.json(projects);  // Return the projects as JSON
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ message: "Failed to fetch projects" });
   }
 });
 
