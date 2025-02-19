@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 const HeroSection = () => {
   const navigate = useNavigate();
 
-  // Handle Start Campaign Button Click
+  
   const handleStartCampaign = () => {
     const token = localStorage.getItem("token");
     if (token) {
       navigate("/start-project");
     } else {
-      navigate("/login"); // Redirect to login if not logged in
+      navigate("/login"); 
     }
   };
 
