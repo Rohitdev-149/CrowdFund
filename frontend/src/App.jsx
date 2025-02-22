@@ -9,13 +9,16 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import StartProject from './pages/StartProject';
+import ScrollToTop from './components/ScrollToTop';
 // import About from './pages/About';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop/>
       <Header/>
       <Routes>
+       
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<Projects/>} />
         <Route path='/about' element={<About/>} />
