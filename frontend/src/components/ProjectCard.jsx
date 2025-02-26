@@ -11,7 +11,12 @@ const ProjectCard = ({ project, isCompact = false }) => {
     return <p>Loading...</p>;
   }
 
-  const handleInvestClick = () => {
+  const handleCardClick = () => {
+    navigate(`/project-details/${project._id}`);
+  };
+
+  const handleInvestClick = (e) => {
+    e.stopPropagation(); // Prevents navigating to details when clicking Fund Now
     navigate("/payment", { state: { project } });
   };
 
@@ -20,7 +25,7 @@ const ProjectCard = ({ project, isCompact = false }) => {
     : 0;
 
   const imageUrl = project.image
-    ? `${BASE_URL}${project.image}` 
+    ? `${BASE_URL}${project.image}`
     : "/images/fallback-image.png";
 
   return (
@@ -29,9 +34,8 @@ const ProjectCard = ({ project, isCompact = false }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`bg-gray-200 shadow-lg rounded-lg p-4 w-full sm:max-w-sm md:max-w-md min-h-[400px] sm:min-h-[450px] ${
-        isCompact ? "compact" : ""
-      }`}
+      className="bg-gray-200 shadow-lg rounded-lg p-4 w-full sm:max-w-sm md:max-w-md min-h-[400px] sm:min-h-[450px] cursor-pointer"
+      onClick={handleCardClick}
     >
       <div className="flex flex-col items-center">
         <img
