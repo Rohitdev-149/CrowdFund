@@ -1,60 +1,77 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaUsers, FaClock, FaTag } from "react-icons/fa";
-import { motion } from "framer-motion";
+import ProjectCard from "../components/ProjectCard";
 
-const BASE_URL = "http://localhost:5001";
-
-const ProjectDetail = () => {
+const ProjectDetails = () => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
+  const [relatedProjects, setRelatedProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/projects/${id}`)
-      .then((res) => res.json())
-      .then((data) => setProject(data))
-      .catch((error) => console.error("Error fetching project:", error));
+    const fetchProjectDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5001/api/projects/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch project details");
+
+        const data = await response.json();
+        setProject(data);
+
+        // Fetch related projects based on category
+        const relatedResponse = await fetch(
+          `http://localhost:5001/api/projects?category=${data.category}`
+        );
+        if (!relatedResponse.ok) throw new Error("Failed to fetch related projects");
+
+        const relatedData = await relatedResponse.json();
+        setRelatedProjects(relatedData.filter((p) => p._id !== id)); // Exclude current project
+      } catch (error) {
+        console.error("Error fetching project details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjectDetails();
   }, [id]);
 
+  if (loading) {
+    return <div className="text-center py-10">Loading project details...</div>;
+  }
+
   if (!project) {
-    return <p className="text-center text-gray-600">Loading...</p>;
+    return <div className="text-center py-10">Project not found</div>;
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl mx-auto">
-      <img
-        src={project.image ? `${BASE_URL}${project.image}` : "/images/fallback-image.png"}
-        alt={project.name}
-        className="w-full h-64 object-cover rounded-lg"
-      />
-      <h1 className="text-2xl font-bold mt-4">{project.name}</h1>
-      <div className="mt-2 flex items-center gap-2 text-gray-600 text-sm">
-        <FaTag className="text-gray-500" /> <span>{project.category}</span>
-      </div>
-      <p className="text-gray-700 mt-3">{project.description}</p>
-
-      <div className="w-full bg-gray-200 rounded-full h-3 mt-4">
-        <motion.div
-          className="bg-blue-500 h-3 rounded-full"
-          initial={{ width: 0 }}
-          animate={{ width: `${(project.raised / project.target) * 100}%` }}
-          transition={{ duration: 0.5 }}
+    <div className="min-h-screen bg-gray-100 px-4 sm:px-10 md:px-20 py-10">
+      {/* Project Details */}
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <img
+          src={`http://localhost:5001${project.image}`}
+          alt={project.name}
+          className="w-full h-60 object-cover rounded-lg"
         />
+        <h1 className="text-3xl font-bold mt-4">{project.name}</h1>
+        <p className="text-gray-700 mt-2">{project.description}</p>
+        <p className="mt-4 text-lg font-semibold">
+          Raised: ₹{project.raised.toLocaleString()} / ₹{project.target.toLocaleString()}
+        </p>
       </div>
-      <p className="text-gray-700 mt-2">
-        Raised: ₹{project.raised?.toLocaleString()} / ₹{project.target?.toLocaleString()}
-      </p>
 
-      <div className="flex justify-between text-gray-700 mt-3">
-        <span className="flex items-center gap-1">
-          <FaUsers className="text-blue-500" /> {project.investors} investors
-        </span>
-        <span className="flex items-center gap-1">
-          <FaClock className="text-blue-500" /> {project.daysLeft} days left
-        </span>
-      </div>
+      {/* Related Projects */}
+      {relatedProjects.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold mb-4">Related Projects</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedProjects.map((relatedProject) => (
+              <ProjectCard key={relatedProject._id} project={relatedProject} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default ProjectDetail;
+export default ProjectDetails;

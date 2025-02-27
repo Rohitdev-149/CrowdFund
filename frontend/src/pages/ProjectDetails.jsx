@@ -3,7 +3,7 @@ import SimilarProjects from "../components/SimilarProjects";
 
 const ProjectDetails = () => {
   return (
-    <div className="p-6">
+    <div className="py-25 px-6">
       <ProjectDetail />
       <SimilarProjects />
     </div>

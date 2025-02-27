@@ -15,17 +15,12 @@ const ProjectCard = ({ project, isCompact = false }) => {
     navigate(`/project-details/${project._id}`);
   };
 
-  const handleInvestClick = (e) => {
-    e.stopPropagation(); // Prevents navigating to details when clicking Fund Now
-    navigate("/payment", { state: { project } });
-  };
-
   const progressWidth = project.target && project.raised
     ? Math.min((Number(project.raised) / Number(project.target)) * 100, 100)
     : 0;
 
   const imageUrl = project.image
-    ? `${BASE_URL}${project.image}`
+    ? `${BASE_URL}${project.image}` 
     : "/images/fallback-image.png";
 
   return (
@@ -35,7 +30,7 @@ const ProjectCard = ({ project, isCompact = false }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="bg-gray-200 shadow-lg rounded-lg p-4 w-full sm:max-w-sm md:max-w-md min-h-[400px] sm:min-h-[450px] cursor-pointer"
-      onClick={handleCardClick}
+      onClick={handleCardClick} // Navigate to project details on click
     >
       <div className="flex flex-col items-center">
         <img
@@ -76,17 +71,6 @@ const ProjectCard = ({ project, isCompact = false }) => {
           <FaClock className="text-blue-500" /> {project.daysLeft} days left
         </span>
       </div>
-
-      {!isCompact && (
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition w-full text-xs sm:text-sm"
-          onClick={handleInvestClick}
-        >
-          Fund Now
-        </motion.button>
-      )}
     </motion.div>
   );
 };
