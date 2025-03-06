@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import StartProject from './pages/StartProject';
 import ScrollToTop from './components/ScrollToTop';
+import Payment from './pages/Payment';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/start-project" element={<StartProject />} />
+        <Route path="/payment" element={<Payment />} />
+        
       </Routes>
       <Footer />
     </Router>

@@ -5,18 +5,18 @@ const Project = require("../models/Project");
 
 const router = express.Router();
 
+// Configure Multer for File Uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-
-    cb(null, './uploads/');
+    cb(null, path.join(__dirname, "../uploads")); // Store in 'uploads/' directory
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
   },
 });
+const upload = multer({ storage });
 
-const upload = multer({ storage: storage });
-
+// 🟢 Create a New Project
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { name, description, category, target, daysLeft } = req.body;
@@ -32,7 +32,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       category,
       target,
       daysLeft,
-      image: imageUrl, 
+      image: imageUrl,
     });
 
     await newProject.save();
@@ -43,13 +43,41 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
-router.get("", async (req, res) => {
+// 🟢 Get All Projects
+router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find();  // Fetch all projects from MongoDB
-    res.json(projects);  // Return the projects as JSON
+    const projects = await Project.find();
+    res.json(projects);
   } catch (error) {
     console.error("Error fetching projects:", error);
     res.status(500).json({ message: "Failed to fetch projects" });
+  }
+});
+
+// 🟢 Get Project by ID (For Project Details Page)
+router.get("/:id", async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.json(project);
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// 🟢 Get Related Projects by Category
+router.get("/category/:category", async (req, res) => {
+  try {
+    const projects = await Project.find({
+      category: req.params.category,
+    }).limit(4);
+    res.json(projects);
+  } catch (error) {
+    console.error("Error fetching related projects:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
