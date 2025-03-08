@@ -6,6 +6,8 @@ const fs = require("fs");
 const cors = require("cors");
 const morgan = require("morgan"); // 🟢 Import Morgan for logging
 const connectDB = require("./config/db");
+const Razorpay = require('razorpay');
+
 
 const app = express();
 connectDB(); 
@@ -47,6 +49,38 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   }
   const imageUrl = `/uploads/${req.file.filename}`; 
   res.status(200).json({ message: "Image uploaded successfully", imageUrl });
+});
+
+// Razorpay instance
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+// Create an order
+app.post('/create-order', async (req, res) => {
+  const { amount } = req.body;
+
+  // Validate the amount
+  if (!amount || isNaN(amount)) {
+    return res.status(400).json({ error: 'Invalid amount' });
+  }
+
+  const options = {
+    amount: amount * 100, // Razorpay expects amount in paise
+    currency: 'INR',
+    receipt: 'order_receipt_1',
+  };
+
+  try {
+    console.log('Creating Razorpay order with options:', options);
+    const order = await razorpay.orders.create(options);
+    console.log('Razorpay order created successfully:', order);
+    res.json({ order });
+  } catch (error) {
+    console.error('Razorpay order creation failed:', error);
+    res.status(500).json({ error: 'Failed to create order', details: error.message });
+  }
 });
 
 // 🟢 Routes
