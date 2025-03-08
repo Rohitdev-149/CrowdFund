@@ -7,6 +7,7 @@ const cors = require("cors");
 const morgan = require("morgan"); // 🟢 Import Morgan for logging
 const connectDB = require("./config/db");
 const Razorpay = require('razorpay');
+const Project = require("./models/Project");
 
 
 const app = express();
@@ -82,6 +83,36 @@ app.post('/create-order', async (req, res) => {
     res.status(500).json({ error: 'Failed to create order', details: error.message });
   }
 });
+
+app.post("/update-funds", async (req, res) => {
+  try {
+    const { projectId, amount } = req.body;
+    console.log("Received update request for:", projectId, "Amount:", amount);
+
+    const numericAmount = Number(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({ message: "Invalid amount" });
+    }
+
+    const project = await Project.findByIdAndUpdate(
+      projectId,
+      { $inc: { raised: numericAmount } }, // Raised amount ko increase karo
+      { new: true }
+    );
+
+    if (!project) {
+      console.log("Project not found!");
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    console.log("Updated Project:", project);
+    res.json({ message: "Funds updated successfully", project });
+  } catch (error) {
+    console.error("Error updating funds:", error);
+    res.status(500).json({ message: "Error updating funds", error });
+  }
+});
+
 
 // 🟢 Routes
 app.use("/api/auth", require("./routes/authRoutes"));

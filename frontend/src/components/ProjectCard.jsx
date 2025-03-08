@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUsers, FaClock, FaTag } from "react-icons/fa";
 import { motion } from "framer-motion";
 import axios from 'axios';
+import axios from 'axios';
 
 const BASE_URL = "http://localhost:5001"; // Backend URL to access images
 
@@ -18,40 +19,47 @@ const ProjectCard = ({ project, isCompact = false }) => {
 
   const handlePayment = async () => {
     try {
-      // Create an order on the backend
-      const response = await axios.post('http://localhost:5001/create-order', {
+      const response = await axios.post("http://localhost:5001/create-order", {
         amount: 100, // Amount in INR
       });
-
+  
       const { order } = response.data;
-
-      // Open Razorpay payment gateway
+  
       const options = {
         amount: order.amount,
         currency: order.currency,
-        name: 'Your Company Name',
-        description: 'Test Payment',
+        name: project.name,
+        description: `Support the project: ${project.name}`,
         order_id: order.id,
-        handler: function (response) {
+        handler: async function (response) {
           alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+  
+          // Backend ko inform karo ki funds update ho gaye
+          await axios.post("http://localhost:5001/update-funds", {
+            projectId: project._id,
+            amount: order.amount / 100, // Convert paisa to INR
+          });
+  
+          // UI update ke liye project data ko refresh karo
+          project.raised += order.amount / 100;
         },
         prefill: {
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          contact: '9999999999',
+          name: "John Doe",
+          email: "john.doe@example.com",
+          contact: "9999999999",
         },
         theme: {
-          color: '#3399cc',
+          color: "#3399cc",
         },
       };
-
+  
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      console.error('Payment failed:', error);
+      console.error("Payment failed:", error);
     }
   };
-
+  
   const progressWidth = project.target && project.raised
     ? Math.min((Number(project.raised) / Number(project.target)) * 100, 100)
     : 0;
@@ -67,6 +75,7 @@ const ProjectCard = ({ project, isCompact = false }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="bg-gray-200 shadow-lg rounded-lg p-4 w-full sm:max-w-sm md:max-w-md min-h-[400px] sm:min-h-[450px] cursor-pointer"
+      // onClick={handleCardClick} // Navigate to project details on click
       // onClick={handleCardClick} // Navigate to project details on click
     >
       <div className="flex flex-col items-center">
@@ -95,10 +104,15 @@ const ProjectCard = ({ project, isCompact = false }) => {
           transition={{ duration: 0.5 }}
         ></motion.div>
       </div>
-      <p className="text-xs sm:text-sm text-gray-700 mt-1">
-        Raised: ₹{project.raised ? project.raised.toLocaleString() : "0"} / ₹
-        {project.target ? project.target.toLocaleString() : "N/A"}
-      </p>
+      <div className="text-xs sm:text-sm text-gray-700 mt-1">
+        <p>
+          Raised: ₹{project.raised ? Number(project.raised).toLocaleString('en-IN') : "0"} / ₹
+          {project.target ? Number(project.target).toLocaleString('en-IN') : "N/A"}
+        </p>
+        <p className="text-blue-500 font-medium">
+          {progressWidth.toFixed(1)}% funded
+        </p>
+      </div>
 
       <div className="flex justify-between text-gray-700 mt-3 text-xs sm:text-sm">
         <span className="flex items-center gap-1">
@@ -108,6 +122,13 @@ const ProjectCard = ({ project, isCompact = false }) => {
           <FaClock className="text-blue-500" /> {project.daysLeft} days left
         </span>
       </div>
+
+      <button
+        className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+        onClick={handlePayment}
+      >
+        Fund Now
+      </button>
 
       <button
         className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
