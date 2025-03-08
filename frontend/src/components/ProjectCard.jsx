@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FaUsers, FaClock, FaTag } from "react-icons/fa";
 import { motion } from "framer-motion";
+import axios from 'axios';
 
 const BASE_URL = "http://localhost:5001"; // Backend URL to access images
 
@@ -11,8 +12,44 @@ const ProjectCard = ({ project, isCompact = false }) => {
     return <p>Loading...</p>;
   }
 
-  const handleCardClick = () => {
-    navigate(`/project-details/${project._id}`);
+  // const handleCardClick = () => {
+  //   navigate(`/project-details/${project._id}`);
+  // };
+
+  const handlePayment = async () => {
+    try {
+      // Create an order on the backend
+      const response = await axios.post('http://localhost:5001/create-order', {
+        amount: 100, // Amount in INR
+      });
+
+      const { order } = response.data;
+
+      // Open Razorpay payment gateway
+      const options = {
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Your Company Name',
+        description: 'Test Payment',
+        order_id: order.id,
+        handler: function (response) {
+          alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+        },
+        prefill: {
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          contact: '9999999999',
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Payment failed:', error);
+    }
   };
 
   const progressWidth = project.target && project.raised
@@ -30,7 +67,7 @@ const ProjectCard = ({ project, isCompact = false }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="bg-gray-200 shadow-lg rounded-lg p-4 w-full sm:max-w-sm md:max-w-md min-h-[400px] sm:min-h-[450px] cursor-pointer"
-      onClick={handleCardClick} // Navigate to project details on click
+      // onClick={handleCardClick} // Navigate to project details on click
     >
       <div className="flex flex-col items-center">
         <img
@@ -71,6 +108,13 @@ const ProjectCard = ({ project, isCompact = false }) => {
           <FaClock className="text-blue-500" /> {project.daysLeft} days left
         </span>
       </div>
+
+      <button
+        className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+        onClick={handlePayment}
+      >
+        Fund Now
+      </button>
     </motion.div>
   );
 };
