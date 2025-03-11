@@ -27,7 +27,8 @@ function Signup() {
       });
 
       console.log("Signup Success:", response.data);
-      navigate("/login");
+      localStorage.setItem("token", response.data.token);
+      navigate("/");
     } catch (err) {
       console.error("Signup Error:", err.response?.data);
       setError(err.response?.data?.message || "Signup failed!");

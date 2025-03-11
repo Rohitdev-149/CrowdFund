@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProjectCard from "../components/ProjectCard";
 import { motion } from "framer-motion";
+import { useRefresh } from "../context/RefreshContext";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const { refreshProjects } = useRefresh();
 
   useEffect(() => {
     // Check if the user is logged in
@@ -17,6 +19,7 @@ function Projects() {
     // Fetch projects from backend
     const fetchProjects = async () => {
       try {
+        setLoading(true);
         const response = await fetch("http://localhost:5001/api/projects");
         if (!response.ok) throw new Error("Failed to fetch projects");
 
@@ -30,85 +33,42 @@ function Projects() {
     };
 
     fetchProjects();
-  }, []);
+  }, [refreshProjects]); // Add refreshProjects to dependency array
 
   // Handle Start Campaign Button Click
   const handleStartCampaign = () => {
     if (isLoggedIn) {
       navigate("/start-project");
     } else {
-      navigate("/login"); // Redirect to login if not logged in
+      navigate("/login");
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600">Loading projects...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 px-4 sm:px-10 md:px-20 py-25">
-      {/* Top Section: Title & Start Campaign Button */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex justify-between items-center mb-8"
-      >
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-          Explore Fundraising Projects
-        </h2>
-
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+    <div className="container mx-auto px-4 py-8 mt-20">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">All Projects</h1>
+        <button
           onClick={handleStartCampaign}
-          className="bg-blue-600 px-6 py-3 rounded-md text-white text-lg font-medium hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
         >
           Start a Campaign
-        </motion.button>
-      </motion.div>
+        </button>
+      </div>
 
-      {/* Project List */}
-      {loading ? (
-        <div className="flex justify-center">
-          <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full"></div>
-        </div>
-      ) : projects.length > 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {projects.map((project, index) => (
-            <motion.div
-              key={project._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <ProjectCard project={project} />
-            </motion.div>
-          ))}
-        </motion.div>
-      ) : (
-        <p className="text-center text-gray-600 text-lg font-medium">
-          No projects available.
-        </p>
-      )}
-
-      {/* Bottom Section: Always Visible Start Campaign Button */}
-      <motion.div
-        className="flex justify-center mt-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleStartCampaign}
-          className="bg-blue-600 px-8 py-4 rounded-md text-white text-lg font-medium hover:bg-blue-700 transition"
-        >
-          Start a Campaign
-        </motion.button>
-      </motion.div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => (
+          <ProjectCard key={project._id} project={project} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,35 +1,54 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiMenu, FiX, FiArrowLeft } from "react-icons/fi";
-import { motion } from "framer-motion"; // Import Framer Motion
+import { motion } from "framer-motion";
+import axios from "axios";
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-    };
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+    if (token) {
+      fetchUserData(token);
+    }
+  }, [location.pathname]);
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    navigate("/");
+  const fetchUserData = async (token) => {
+    try {
+      const response = await axios.get("http://localhost:5001/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUserData(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+      }
+    }
   };
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }} // Starts above with opacity 0
-      animate={{ y: 0, opacity: 1 }} // Slides down smoothly
-      transition={{ duration: 0.8, ease: "easeOut" }} // Smooth transition
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       className="bg-gray-300 fixed top-0 left-0 w-full h-20 flex items-center justify-between px-7 py-4 text-gray-800 text-xl shadow-md z-50"
     >
       {/* Left: Brand Name */}
@@ -65,26 +84,33 @@ const Nav = () => {
         </ul>
       </nav>
 
-      {/* Right: Auth Buttons */}
-      <div className="flex-none hidden md:flex gap-4">
+      {/* Right: Authentication Buttons or Campaign & Profile */}
+      <div className="flex-none hidden md:flex gap-4 items-center">
         {isLoggedIn ? (
           <>
+            {/* Start a Campaign Button */}
             <Link to="/start-project" className="bg-blue-600 px-6 py-3 rounded-md text-white hover:bg-blue-700 transition-all duration-200 transform hover:scale-105">
               Start a Campaign
             </Link>
-            <button onClick={logout} className="bg-red-500 px-6 py-3 rounded-md text-white hover:bg-red-600 transition-all duration-200 transform hover:scale-105">
-              Logout
-            </button>
+
+            {/* Profile Picture */}
+            <Link to="/profile">
+              <img
+                src={userData?.profileImage ? `http://localhost:5001${userData.profileImage}` : "/default-profile.jpg"}
+                alt="Profile"
+                className="w-10 h-10 rounded-full border border-gray-400 object-cover"
+              />
+            </Link>
           </>
         ) : (
-          <>
-            <Link to="/login" className="bg-blue-500 px-6 py-3 rounded-md text-white hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+          <div className="flex gap-4">
+            <Link to="/login" className="bg-blue-600 px-6 py-3 rounded-md text-white hover:bg-blue-700 transition-all duration-200">
               Login
             </Link>
-            <Link to="/signup" className="bg-green-500 px-6 py-3 rounded-md text-white hover:bg-green-600 transition-all duration-200 transform hover:scale-105">
+            <Link to="/signup" className="bg-gray-700 px-6 py-3 rounded-md text-white hover:bg-gray-800 transition-all duration-200">
               Sign Up
             </Link>
-          </>
+          </div>
         )}
       </div>
 
@@ -135,28 +161,45 @@ const Nav = () => {
             </li>
           </ul>
 
-          {/* Auth Buttons in Mobile Menu */}
-          <div className="flex flex-col gap-4">
-            {isLoggedIn ? (
-              <>
-                <Link to="/start-project" className="bg-blue-600 px-6 py-3 rounded-md text-white hover:bg-blue-700 transition-all duration-200 transform hover:scale-105">
-                  Start a Campaign
-                </Link>
-                <button onClick={logout} className="bg-red-500 px-6 py-3 rounded-md text-white hover:bg-red-600 transition-all duration-200 transform hover:scale-105">
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="bg-blue-500 px-6 py-3 rounded-md text-white hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
-                  Login
-                </Link>
-                <Link to="/signup" className="bg-green-500 px-6 py-3 rounded-md text-white hover:bg-green-600 transition-all duration-200 transform hover:scale-105">
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
+          {/* Mobile Authentication Section */}
+          {isLoggedIn ? (
+            <div className="flex flex-col gap-4">
+              {/* Start a Campaign Button */}
+              <Link 
+                to="/start-project" 
+                className="bg-blue-600 px-6 py-3 rounded-md text-white hover:bg-blue-700 transition-all duration-200 transform hover:scale-105"
+                onClick={toggleMenu}
+              >
+                Start a Campaign
+              </Link>
+
+              {/* My Profile Button */}
+              <Link
+                to="/profile"
+                className="bg-gray-300 px-6 py-3 rounded-md text-gray-800 hover:bg-gray-400 transition-all duration-200 transform hover:scale-105"
+                onClick={toggleMenu}
+              >
+                My Profile
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 w-64">
+              <Link 
+                to="/login" 
+                className="bg-blue-600 px-6 py-3 rounded-md text-white hover:bg-blue-700 transition-all duration-200 text-center"
+                onClick={toggleMenu}
+              >
+                Login
+              </Link>
+              <Link 
+                to="/signup" 
+                className="bg-gray-700 px-6 py-3 rounded-md text-white hover:bg-gray-800 transition-all duration-200 text-center"
+                onClick={toggleMenu}
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
         </div>
       </nav>
     </motion.header>

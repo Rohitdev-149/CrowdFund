@@ -12,26 +12,33 @@ import Signup from './pages/Signup';
 import StartProject from './pages/StartProject';
 import ScrollToTop from './components/ScrollToTop';
 import Payment from './pages/Payment';
+import Profile from './components/Profile'; // Import Profile component
+import { RefreshProvider } from './context/RefreshContext';
+import TestPayments from './components/TestPayments';
+
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/project-details/:id" element={<ProjectDetails />} /> {/* Route for ProjectDetails */}
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/start-project" element={<StartProject />} />
-        <Route path="/payment" element={<Payment />} />
-        
-      </Routes>
-      <Footer />
-    </Router>
+    <RefreshProvider>
+      <Router>
+        <ScrollToTop />
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/project-details/:id" element={<ProjectDetails />} /> {/* Route for ProjectDetails */}
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/start-project" element={<StartProject />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/profile" element={<Profile />} /> {/* Add Profile route */}
+          <Route path="/test-payments" element={<TestPayments />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </RefreshProvider>
   );
 }
 

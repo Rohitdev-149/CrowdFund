@@ -10,7 +10,7 @@ function Home() {
 
   return (
     <>
-      <Header />
+
       <HeroSection />
       <ProjectSection/>
       <OurMission/>

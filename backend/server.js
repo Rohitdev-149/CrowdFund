@@ -15,16 +15,16 @@ connectDB();
 
 // 🟢 Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  origin: 'http://localhost:5173',
+  credentials: true,
+  exposedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); // 🟢 Enable form data parsing
 app.use(morgan("dev")); // 🟢 Log incoming requests
 
 // 🟢 Serve Static Files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', cors(), express.static(path.join(__dirname, 'uploads')));
 
 // 🟢 Create Upload Directory if Not Exists
 const uploadDir = path.join(__dirname, 'uploads');
@@ -116,17 +116,27 @@ app.post("/update-funds", async (req, res) => {
 
 // 🟢 Routes
 app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/projects", require("./routes/projectRoutes")); 
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/projects", require("./routes/projectRoutes"));
+app.use("/api/payments", require("./routes/paymentRoutes"));
 
 // 🟢 API Test Route
-app.get("/", (req, res) => res.send("API is running...")); 
+app.get("/test", (req, res) => {
+  res.json({ message: "Server is running!" });
+});
 
 // 🟢 Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error("Server Error:", err.stack);
-  res.status(500).json({ message: "Internal Server Error", error: err.message }); 
+  res.status(500).json({ 
+    message: "Internal Server Error", 
+    error: err.message 
+  }); 
 });
 
 // 🟢 Start Server
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`👉 Test the server: http://localhost:${PORT}/test`);
+});

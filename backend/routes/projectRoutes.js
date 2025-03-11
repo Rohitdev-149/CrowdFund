@@ -2,6 +2,8 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const Project = require("../models/Project");
+const User = require("../models/User");
+const auth = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -17,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // 🟢 Create a New Project
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
     const { name, description, category, target, daysLeft } = req.body;
 
@@ -33,9 +35,17 @@ router.post("/", upload.single("image"), async (req, res) => {
       target,
       daysLeft,
       image: imageUrl,
+      user: req.user.id // Associate project with user
     });
 
     await newProject.save();
+
+    // Add project to user's campaigns
+    await User.findByIdAndUpdate(
+      req.user.id,
+      { $push: { campaigns: newProject._id } }
+    );
+
     res.status(201).json({ message: "Project created successfully", project: newProject });
   } catch (error) {
     console.error("Error creating project:", error);

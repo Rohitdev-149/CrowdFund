@@ -44,7 +44,7 @@ const ProjectDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 sm:px-10 md:px-20 py-10">
+    <div className="min-h-screen bg-gray-100 px-4 sm:px-10 md:px-20 py-10 mt-20">
       {/* Project Details */}
       <div className="bg-white shadow-lg rounded-lg p-6">
         <img
@@ -52,17 +52,66 @@ const ProjectDetails = () => {
           alt={project.name}
           className="w-full h-60 object-cover rounded-lg"
         />
-        <h1 className="text-3xl font-bold mt-4">{project.name}</h1>
-        <p className="text-gray-700 mt-2">{project.description}</p>
-        <p className="mt-4 text-lg font-semibold">
-          Raised: ₹{project.raised.toLocaleString()} / ₹{project.target.toLocaleString()}
-        </p>
+        <h1 className="text-3xl font-bold mt-6 text-gray-900">{project.name}</h1>
+        
+        {/* Category */}
+        <div className="mt-4 inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+          {project.category}
+        </div>
+
+        {/* Description */}
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">About This Project</h2>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+            {project.description}
+          </p>
+        </div>
+
+        {/* Progress and Stats */}
+        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <p className="text-gray-600 text-sm">Raised</p>
+              <p className="text-2xl font-bold text-gray-900">
+                ₹{project.raised.toLocaleString()}
+              </p>
+              <p className="text-sm text-gray-500">
+                of ₹{project.target.toLocaleString()} goal
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 text-sm">Investors</p>
+              <p className="text-2xl font-bold text-gray-900">{project.investors}</p>
+              <p className="text-sm text-gray-500">total backers</p>
+            </div>
+            <div>
+              <p className="text-gray-600 text-sm">Days Left</p>
+              <p className="text-2xl font-bold text-gray-900">{project.daysLeft}</p>
+              <p className="text-sm text-gray-500">to go</p>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mt-6">
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="bg-blue-500 h-3 rounded-full transition-all duration-500"
+                style={{
+                  width: `${Math.min((project.raised / project.target) * 100, 100)}%`,
+                }}
+              ></div>
+            </div>
+            <p className="mt-2 text-sm text-gray-600 text-right">
+              {Math.round((project.raised / project.target) * 100)}% funded
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Related Projects */}
       {relatedProjects.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-4">Related Projects</h2>
+          <h2 className="text-2xl font-semibold mb-6">Related Projects</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProjects.map((relatedProject) => (
               <ProjectCard key={relatedProject._id} project={relatedProject} />
