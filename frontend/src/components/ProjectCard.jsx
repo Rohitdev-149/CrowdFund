@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { FaUsers, FaClock, FaTag } from "react-icons/fa";
 import { motion } from "framer-motion";
 import axios from 'axios';
-import axios from 'axios';
 import { useState } from 'react';
 
 const BASE_URL = "http://localhost:5001"; // Backend URL to access images
